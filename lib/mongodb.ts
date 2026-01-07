@@ -17,7 +17,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Validate that the MongoDB URI is defined
 if (!MONGODB_URI) {
   throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
+      'Please define the MONGODB_URI environment variable inside .env.local'
   );
 }
 
@@ -39,6 +39,7 @@ if (!global.mongoose) {
  * @returns {Promise<typeof mongoose>} The Mongoose instance with an active connection
  */
 async function connectDB(): Promise<typeof mongoose> {
+
   // Return existing connection if available
   if (cached.conn) {
     return cached.conn;
@@ -46,11 +47,18 @@ async function connectDB(): Promise<typeof mongoose> {
 
   // Create a new connection promise if one doesn't exist
   if (!cached.promise) {
+
+    if (!MONGODB_URI) {
+      throw new Error(
+          'Please define the MONGODB_URI environment variable inside .env.local'
+      );
+    }
+    
     const opts = {
       bufferCommands: false, // Disable buffering to fail fast if not connected
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose;
     });
   }
