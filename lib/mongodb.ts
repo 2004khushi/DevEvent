@@ -53,7 +53,7 @@ async function connectDB(): Promise<typeof mongoose> {
           'Please define the MONGODB_URI environment variable inside .env.local'
       );
     }
-    
+
     const opts = {
       bufferCommands: false, // Disable buffering to fail fast if not connected
     };
