@@ -3,12 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import {EventItem} from "@/lib/constants";
-import posthog from 'posthog-js';
+import { usePostHog } from 'posthog-js/react'
 
 export const EventCard = ({
                               title, image, location, date, time, slug}: EventItem) => {
+
+    const posthog = usePostHog();
+
     const handleClick = () => {
-        posthog.capture('event_card_clicked', {
+        posthog?.capture('event_card_clicked', {
             event_title: title,
             event_slug: slug,
             event_location: location,
@@ -19,6 +22,7 @@ export const EventCard = ({
 
     return (
         <Link href={`/events/${slug}`} id='event-card' onClick={handleClick}>
+
             <Image src={image} alt={title} width={410} height={300} className='poster' />
 
             <div className='flex flex-row gap-2'>
