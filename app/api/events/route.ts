@@ -12,16 +12,19 @@ export async function POST(req:NextRequest) {
         let event;
 
         try{
-            event = Object.fromEntries(formData.entries());
+            event = Object.fromEntries(formData.entries()); //.formEntries() -> Convert form fields → JS object and .entries() lets you loop through formData
         }catch(err){
             console.error(err);
-            return NextResponse.json({message:"Invalid json data fomat"}, {status:400});
+            return NextResponse.json({message:"Invalid json data format"}, {status:400});
         }
 
-        const file = formData.get('image') as File;
+        const file = formData.get('image') as File; //This file is a Web API File
         if(!file) return NextResponse.json({message:"Image file is required"},{status:400});
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const arrayBuffer = await file.arrayBuffer(); //convert webapi to 0s and 1s
+        //Cloudinary is a Node.js library; Node.js does NOT understand web api file at all and does NOT understand ArrayBuffer well. AS Node.js expects: Buffer
+        const buffer = Buffer.from(arrayBuffer); //Convert browser-style binary data into Node-style binary data.
+        //Now: buffer is a Node.js Buffer; Cloudinary can stream it ; MongoDB / FS / AWS S3 can read it
+
 
         const uploadResult = await new Promise((resolve, reject) => {
             cloudinary.uploader.upload_stream({resource_type:'image', folder:'DevEvent'},(error, result) => {
@@ -30,12 +33,12 @@ export async function POST(req:NextRequest) {
             }).end(buffer);
         });
 
-        event.image = (uploadResult as {secure_url:string}).secure_url;
+        event.image = (uploadResult as {secure_url:string}).secure_url;  //Replaces image: File with image: URL nd This is what you store in MongoDB
 
 
         const createdEvent = await Event.create(event);
 
-        return NextResponse.json({message:"Successfully created event", event: createdEvent}, {status:201});
+        return NextResponse.json({message:"Successfully created events", event: createdEvent}, {status:201});
 
     }catch(e){
         console.log(e);
@@ -53,3 +56,6 @@ export async function GET() {
         return NextResponse.json({message:"Event Fetching Failed",errors:err},{status:500});
     }
 }
+
+
+//a route that accepts a SLUG as input -> returns that specific events details
