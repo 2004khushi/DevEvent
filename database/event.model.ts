@@ -110,8 +110,12 @@ const EventSchema = new Schema<IEvent>(
 );
 
 // Pre-save hook for slug generation and data normalization
+//pre('save') lets you run logic automatically BEFORE MongoDB saves the document.
 EventSchema.pre('save', function (next) {
-    const event = this as IEvent;
+
+    //Why function and NOT arrow function? -> Because Mongoose needs this. -> this = the actual MongoDB document that is ABOUT TO BE SAVED to MongoDB
+    const event = this as IEvent; //abe this matlb jo bhi vo naya data aaya hai(form) uski jo bhi attributes h that can accessed with help of this.date and this.organizer
+    // and all to vahi this ko bas naam dediya event. baaki this is just pointing to that data.
 
     // Generate slug only if title changed or document is new
     if (event.isModified('title') || event.isNew) {
@@ -128,7 +132,10 @@ EventSchema.pre('save', function (next) {
         event.time = normalizeTime(event.time);
     }
 
-    //next()
+    //sab jagah ismodified isliye h ki agar midify kiya h kisine bichme to us ko this me daalke accoridngly change krdenge fir vo chij
+    //On a new document, all fields are considered “modified”.
+    // so u m8 be asking y explicitly writing .isNew check for lsug -> it's just for extra care bcs slug pe hi apni kaafi saari chije depnd krti h
+
 });
 
 // Helper function to generate URL-friendly slug
@@ -178,15 +185,17 @@ function normalizeTime(timeString: string): string {
     return `${hours.toString().padStart(2, '0')}:${minutes}`;
 }
 
-// Create index on slug for faster queries
-EventSchema.index({ slug: 1 });
+
 
 //Create compound index for common queries
 EventSchema.index({date:1, mode:1});
+// date:1 and mode:1 means ki ascending order me wo date and mode save rkhega apne paas taaki jab apanko cahhiye vo easily find krke dede.
+// eg usage -> Event.find({ date: "2025-04-10", mode: "online" })
+
 
 // Export model, reusing existing model in development to avoid OverwriteModelError
 const Event: Model<IEvent> =
-  mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+  mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema); //this again bcs of nextjs hmr problem that u give it whats already there or make new one
 
 //:model<ievent> nhi tha usme
 

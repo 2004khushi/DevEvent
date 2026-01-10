@@ -5,6 +5,7 @@ import {IEvent} from "@/database";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Page = async () => {
+
     const response = await fetch(`${BASE_URL}/api/events`);
     const data = await response.json();
     const events: IEvent[] = data.events;

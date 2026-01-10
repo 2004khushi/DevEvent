@@ -37,3 +37,6 @@ The Problem: When your website starts up, you might have 5 different components 
 Without the promise cache: You would launch 5 simultaneous requests to MongoDB.
 
 With the promise cache: The first request starts the "handshake." The other 4 requests see the promise is already in progress and they just wait for that same promise. This saves CPU, memory, and network bandwidth.
+
+
+4. in similar way to sav eus from nextjs HMR CONDN have done saving in database folder too! (i.e. cached)

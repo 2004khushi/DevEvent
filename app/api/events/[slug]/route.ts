@@ -8,8 +8,6 @@ type RouteParams = {
   }>
 }
 
-// Accepted slug pattern: lowercase letters, numbers, hyphens/underscores
-const SLUG_REGEX = /^[a-z0-9](?:[a-z0-9-_]*[a-z0-9])?$/;
 
 /**
  * GET /api/events/[slug]
@@ -21,7 +19,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams):Promise<Ne
     await connectDB();
     const {slug} = await params;
 
-    if (!slug || typeof slug !== 'string' || slug.trim() === '') {
+    if (!slug || slug.trim() === '') {
       return NextResponse.json(
         { error: 'Missing required route parameter: slug' },
         { status: 400 }
