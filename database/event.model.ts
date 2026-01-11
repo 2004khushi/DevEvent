@@ -197,6 +197,5 @@ EventSchema.index({date:1, mode:1});
 const Event: Model<IEvent> =
   mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema); //this again bcs of nextjs hmr problem that u give it whats already there or make new one
 
-//:model<ievent> nhi tha usme
 
 export default Event;

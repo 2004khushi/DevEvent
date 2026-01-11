@@ -20,6 +20,15 @@ export async function POST(req:NextRequest) {
 
         const file = formData.get('image') as File; //This file is a Web API File
         if(!file) return NextResponse.json({message:"Image file is required"},{status:400});
+
+        const tags = JSON.parse(String(formData.get("tags")));
+        const agenda = JSON.parse(String(formData.get("agenda")));
+
+        // 🚨 CRITICAL FIX — remove bad string versions
+        delete event.tags;
+        delete event.agenda;
+
+
         const arrayBuffer = await file.arrayBuffer(); //convert webapi to 0s and 1s
         //Cloudinary is a Node.js library; Node.js does NOT understand web api file at all and does NOT understand ArrayBuffer well. AS Node.js expects: Buffer
         const buffer = Buffer.from(arrayBuffer); //Convert browser-style binary data into Node-style binary data.
@@ -36,7 +45,11 @@ export async function POST(req:NextRequest) {
         event.image = (uploadResult as {secure_url:string}).secure_url;  //Replaces image: File with image: URL nd This is what you store in MongoDB
 
 
-        const createdEvent = await Event.create(event);
+        const createdEvent = await Event.create({
+            ...event,
+            agenda,
+            tags,
+        });
 
         return NextResponse.json({message:"Successfully created events", event: createdEvent}, {status:201});
 
@@ -58,4 +71,3 @@ export async function GET() {
 }
 
 
-//a route that accepts a SLUG as input -> returns that specific events details
