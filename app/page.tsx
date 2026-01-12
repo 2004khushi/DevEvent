@@ -1,10 +1,14 @@
 import ExploreBtn from "@/components/exploreBtn";
 import {EventCard} from "@/components/EventCard";
 import {IEvent} from "@/database";
+import {cacheLife} from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Page = async () => {
+
+    'use cache';
+    cacheLife('hours');  //iske vajese kuch bhi user agar abhi new event agar banaayega to vo 1 hr baad dikhega! taaki no traffic jam for others.
 
     const response = await fetch(`${BASE_URL}/api/events`);
     const data = await response.json();
