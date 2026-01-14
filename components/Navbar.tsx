@@ -32,9 +32,14 @@ export const Navbar = () => {
                 </Link>
 
                 <ul>
-                    <Link href='/' onClick={() => handleNavClick('Home')}>Home</Link>
-                    <Link href='/' onClick={() => handleNavClick('Events')}>Events</Link>
-                    <Link href='/' onClick={() => handleNavClick('Create Event')}>Create Event</Link>
+                    <Link href='/' onClick={() => handleNavClick('Home')} className="hover:text-blue-500">Home</Link>
+                    <Link
+                        href="#events"
+                        onClick={() => handleNavClick('Events')}
+                        className="hover:text-blue-500" // Add any Tailwind classes here
+                    >
+                        Events
+                    </Link>
                 </ul>
             </nav>
         </header>
