@@ -1,7 +1,9 @@
 import ExploreBtn from "@/components/exploreBtn";
 import {EventCard} from "@/components/EventCard";
 import {IEvent} from "@/database";
+import {Event} from "@/database";
 import {cacheLife} from "next/cache";
+import mongoose from "mongoose";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -10,9 +12,43 @@ const Page = async () => {
     'use cache';
     cacheLife('hours');  //iske vajese kuch bhi user agar abhi new event agar banaayega to vo 1 hr baad dikhega! taaki no traffic jam for others.
 
-    const response = await fetch(`${BASE_URL}/api/events`);
-    const data = await response.json();
-    const events: IEvent[] = data.events;
+    // const response = await fetch(`${BASE_URL}/api/events`);
+    // const data = await response.json();
+    // const events: IEvent[] = data.events;
+    //
+    // return (
+    //     <section>
+    //         <h1 className="heading-1 text-center">The Hub for Every Dev <br /> Event You Can't Miss</h1>
+    //         <p className="text-center mt-5">Hackathons, Meetups, and Conferences, All in One Place</p>
+    //
+    //         <ExploreBtn/>
+    //
+    //         <div className="mt-20 space-y-7">
+    //             <h3 className="heading-3"> Featured Events </h3>
+    //
+    //             <ul id="events" className="events">
+    //                 {events.length > 0 ? (
+    //                     events.map((event) => (
+    //                         <li key={event.title}>
+    //                             <EventCard {...event} />
+    //                         </li>
+    //                     ))
+    //                 ) : (
+    //                     <p>No events found</p>
+    //                 )}
+    //             </ul>
+    //         </div>
+    //     </section>
+    // )
+
+    // 1. Ensure DB is connected (Important for build-time)
+    if (mongoose.connection.readyState === 0) {
+        await mongoose.connect(process.env.MONGODB_URI!);
+    }
+
+    // 2. Fetch directly using the model
+    // .lean() makes the query faster by returning plain JS objects instead of heavy Mongoose documents
+    const events = await Event.find({}).sort({ date: 1 }).lean();
 
     return (
         <section>
@@ -25,10 +61,11 @@ const Page = async () => {
                 <h3 className="heading-3"> Featured Events </h3>
 
                 <ul id="events" className="events">
-                    {events.length > 0 ? (
+                    {events && events.length > 0 ? (
                         events.map((event) => (
-                            <li key={event.title}>
-                                <EventCard {...event} />
+                            <li key={event._id?.toString() || event.title}>
+                                {/* Cast as any or IEvent to match props */}
+                                <EventCard {...(event as any)} />
                             </li>
                         ))
                     ) : (
@@ -37,6 +74,6 @@ const Page = async () => {
                 </ul>
             </div>
         </section>
-    )
+    );
 }
 export default Page
