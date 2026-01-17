@@ -13,6 +13,8 @@ const BookEvent = ({eventId}: {eventId: string}) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        //When you click a "Submit" button inside a <form>, the browser's default behavior is to refresh the entire page and try to send the data via the URL
+        //preventDefault() -> The browser stops the refresh. The page stays exactly as it is.
 
         const { success} = await createBooking({eventId, email});
 

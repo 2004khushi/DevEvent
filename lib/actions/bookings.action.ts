@@ -7,7 +7,7 @@ export const createBooking = async ({eventId, email} : {eventId: string, email: 
     try{
         await connectDB();
         await Booking.create({eventId,email});
-
+        //.create() -> Shortcut for new Booking(data) and then .save(). It pushes data to MongoDB.
 
         return { success: true};
 

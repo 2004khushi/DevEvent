@@ -51,6 +51,8 @@ export default async function EventDetails({params,}: {
 
     if (!res.ok) return notFound();
 
+    //const data = await res.json();	You have to use data.event everywhere.
+    //const { event } = await res.json();	You can use event directly.
     const { event } = await res.json();
     if (!event) return notFound();
 

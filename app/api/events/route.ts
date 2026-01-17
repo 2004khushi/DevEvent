@@ -46,6 +46,7 @@ export async function POST(req:NextRequest) {
 
 
         const createdEvent = await Event.create({
+            //.create() -> Shortcut for new Event(data) and then .save(). It pushes data to MongoDB.
             ...event,
             agenda,
             tags,

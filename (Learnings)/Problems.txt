@@ -1,0 +1,34 @@
+1) One of the most interesting challenges I faced was handling Complex Data Types in Multi-part Form Data within Next.js.
+
+   When creating an event, I was sending arrays like tags and agenda through a form.
+   However, FormData converts everything into strings. On the server, Object.fromEntries(event = Object.fromEntries(formData.entries())) initially captured these as 'Bad Strings'
+   (e.g., '["tech"]').
+
+   To maintain strict TypeScript types and Database integrity, I had to implement a 'Extract, Clean, and Reconstruct' pattern.
+   I manually parsed the JSON strings into real JavaScript arrays (const tags = JSON.parse(String(formData.get("tags")));
+                                                                   const agenda = JSON.parse(String(formData.get("agenda")))),
+   deleted the stale string properties from the object to avoid type conflicts delete event.tags;
+                                                                               delete event.agenda;()), and
+   then spread the cleaned object(const createdEvent = await Event.create({
+                                      ...event,
+                                      agenda,
+                                      tags,
+                                  });) back into the Mongoose .create() method.
+   This ensured my database never received malformed data and my TypeScript compiler stayed happy.
+
+
+   "This clean-up was vital because While Mongoose is often smart enough to cast strings into arrays during the database write, I realized that my API response and Local State were becoming inconsistent.
+    Because I wasn't cleaning the formData object, the data being returned to my UI was still in string format. This caused my frontend components—which expected to map over an array of tags—to crash or display incorrectly.
+   I decided to implement an explicit Delete-and-Reconstruct pattern. This ensured 'Single Source of Truth': that the data in my code, the data in my database, and the data in my UI were perfectly synchronized as proper JavaScript objects."
+
+   U CAN CHECK WHAT I HAVE DONE in route.ts of events directory of api folder.
+
+
+2) The Problem: "In a standard HTML form, clicking 'Submit' triggers a full page refresh. Early in my project,
+I realized that if the browser refreshed, my React state (like isSubmitting or isSuccess) would be wiped out. Even worse,
+if there was a network error during the booking, the user would just see the page flicker and reload, with no idea that their booking actually failed."
+
+The Solution: I implemented e.preventDefault() to intercept the browser's native behavior.
+This allowed me to keep the user on the page and handle the submission asynchronously.
+
+U CAN CHECK WHAT I HAVE DONE in BookEvent.tsx.
