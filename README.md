@@ -8,6 +8,13 @@ This project was built end-to-end using modern web engineering practices and ref
 
 ---
 
+## 🏛️ Architecture
+
+This project follows a **serverless-oriented monolithic architecture** using Next.js App Router.
+
+The frontend and backend live in a single codebase, while API routes and server actions execute as stateless serverless functions. This approach enables fast iteration, simplified deployment, and scalable request-based execution without introducing microservice complexity.
+
+
 ## ✨ Features
 - 🔍 **Event Discovery** – Browse a curated list of developer events
 - 🧭 **Dynamic Event Pages** – SEO-friendly, slug-based event detail pages

@@ -1,0 +1,54 @@
+What “serverless” ACTUALLY means
+
+Serverless is about how code runs, not where you write it.
+
+In serverless, you do not run a long-lived backend server.
+
+Instead:
+Backend logic runs only when a request comes
+Each request is stateless
+After the response → execution stops
+Infrastructure (servers, scaling) is handled by the platform
+You write functions, not servers.
+
+
+IN PROJECT ->
+🔹 API Routes (/api/events, /api/events/[slug])
+When deployed (e.g. Vercel):
+-Each route becomes a serverless function
+-Runs only when called
+-No Express server running in the background
+-Scales automatically per request
+----->export async function GET() { ... }
+This is a serverless function.
+
+🔹 Server Actions
+When this runs:
+------->await createBooking({ eventId, email });
+What happens:
+-Code executes on the server only for that action
+-No backend process stays alive
+-After execution → destroyed
+-That is pure serverless behavior.
+
+🔹 Database connection caching (important)
+connectDB logic proves understanding of serverless:
+-Serverless functions may start many times
+-Without caching, you’d open too many DB connections
+-You used a global cached connection
+-This is classic serverless optimization.
+👉 If this were a traditional server, you’d open DB once and reuse it forever.
+
+
+7️⃣ One mental model (this helps a LOT)
+Traditional server
+“I start the server → it stays alive → handles many requests”
+
+Serverless (your project)
+“A request comes → function runs → response → function disappears”
+
+
+
+
+----->
+-----> Serverless means my backend logic runs as stateless, on-demand functions instead of a continuously running server, which is exactly how Next.js API routes and server actions work.
